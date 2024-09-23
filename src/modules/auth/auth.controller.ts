@@ -11,17 +11,11 @@ import { ConfigService } from '@nestjs/config';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { enumData } from 'src/constants/enum-data';
-import { UserEntity } from 'src/entities';
+import { UserEntity } from 'src/entities/user.entity';
 import { CurrentUser } from 'src/helpers/decorators';
-import { PaginationDTO } from '../dto';
 import { passport } from './auth.passport';
 import { AuthService } from './auth.service';
-import {
-  FilterLstUserToInviteTeamDTO,
-  RefreshTokenDTO,
-  SignInDTO,
-  SignUpDTO,
-} from './dto';
+import { RefreshTokenDTO, SignInDTO, SignUpDTO } from './dto';
 import { JwtAuthGuard } from './jwt.auth.guard';
 
 @ApiTags('Authentication')
@@ -32,19 +26,6 @@ export class AuthController {
     private readonly configService: ConfigService,
   ) {}
   private FRONT_END_LINK = this.configService.get<string>('FRONT_END_LINK');
-
-  @ApiOperation({
-    summary: 'Get lst user to invite team',
-  })
-  @Post('lst-user-to-invite-team')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  async getLstUserFilter(
-    @CurrentUser() user: UserEntity,
-    @Body() filter: PaginationDTO<FilterLstUserToInviteTeamDTO>,
-  ) {
-    return await this.service.getLstUserToInviteTeam(user, filter);
-  }
 
   @ApiOperation({
     summary: 'Get profile of user',
@@ -170,7 +151,8 @@ export class AuthController {
         if (err || !user) {
           return res.redirect('/login?error=auth_failed');
         }
-        const signupDTO = await this.service.convertJsonFacebookToSignUpDTO(user);
+        const signupDTO =
+          await this.service.convertJsonFacebookToSignUpDTO(user);
         if (await this.service.checkUserExist(signupDTO.username)) {
           const signInDto =
             await this.service.convertSignUpDTOToSignInDTO(signupDTO);
@@ -188,7 +170,6 @@ export class AuthController {
       },
     )(req, res);
   }
-
 
   @ApiOperation({
     summary: 'Refresh ac token when ac token expired',

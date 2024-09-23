@@ -1,4 +1,4 @@
-import { UserEntity } from 'src/entities';
+import { UserEntity } from 'src/entities/user.entity';
 import { UserDetailEntity } from 'src/entities/userDetail.entity';
 import { CustomRepository } from 'src/typeorm/typeorm-decorater';
 import { Repository } from 'typeorm';

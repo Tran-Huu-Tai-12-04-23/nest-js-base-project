@@ -1,22 +1,6 @@
 import { compare, hash } from 'bcrypt';
-import {
-  BeforeInsert,
-  BeforeUpdate,
-  Column,
-  Entity,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-} from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToOne } from 'typeorm';
 import { BaseEntityCustom } from './base.entity';
-import { GroupChatEntity } from './groupChat.entity';
-import { MessageEntity } from './message.entity';
-import { NotificationEntity } from './notification.entity';
-import { TaskEntity } from './task.entity';
-import { TeamEntity } from './team.entity';
 import { UserDetailEntity } from './userDetail.entity';
 @Entity(`Users`)
 export class UserEntity extends BaseEntityCustom {
@@ -53,24 +37,4 @@ export class UserEntity extends BaseEntityCustom {
 
   @OneToOne(() => UserDetailEntity, (userDetail) => userDetail.user)
   userDetail: Promise<UserDetailEntity>;
-
-  @OneToMany(() => MessageEntity, (mess) => mess.owner)
-  messageSend: Promise<MessageEntity[]>;
-
-  @ManyToMany(() => TeamEntity, (team) => team.members)
-  @JoinColumn({ name: 'teamId', referencedColumnName: 'id' })
-  teams: Promise<TeamEntity[]>;
-
-  @ManyToMany(() => TaskEntity, (task) => task.lstPersonInCharge)
-  tasks: Promise<TaskEntity[]>;
-
-  @ManyToMany(() => GroupChatEntity, (gr) => gr.lstMember)
-  lstGroupChat: Promise<GroupChatEntity[]>;
-
-  @ManyToOne(() => NotificationEntity, (noti) => noti.user)
-  notifications: Promise<NotificationEntity[]>;
-
-  @OneToMany(() => GroupChatEntity, (gr) => gr.owner)
-  @JoinTable()
-  lstGroupChatIsOwner: Promise<GroupChatEntity[]>;
 }
